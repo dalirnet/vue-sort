@@ -1,40 +1,62 @@
 {
-  "name": "vue-sort",
-	"displayName": "Vue sort",
-	"description": "Sort vue component",
-	"version": "0.0.1",
-	"engines": {
-		"vscode": "^1.55.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-        "onCommand:vue-sort.helloWorld"
-	],
-	"main": "./extension.js",
-	"contributes": {
-		"commands": [{
-            "command": "vue-sort.helloWorld",
-            "title": "Hello World"
-
-		}]
-	},
-	"scripts": {
-		"lint": "eslint .",
-		"pretest": "yarn run lint",
-		"test": "node ./test/runTest.js"
-	},
-	"devDependencies": {
-        "@types/vscode": "^1.55.0",
+    "name": "vue-sort",
+    "displayName": "Vue sort",
+    "version": "0.0.1",
+    "description": "Sort vue component",
+    "categories": [
+        "Formatters",
+        "Other"
+    ],
+    "keywords": [
+        "vue",
+        "sort"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dalirnet/vue-sort.git"
+    },
+    "main": "./extension.js",
+    "scripts": {},
+    "contributes": {
+        "commands": [
+            {
+                "command": "vue-sort.sort",
+                "title": "Sort vue component"
+            }
+        ],
+        "menus": {
+            "editor/context": [
+                {
+                    "when": "resourceLangId == vue",
+                    "command": "vue-sort.sort",
+                    "group": "1_modification"
+                }
+            ]
+        },
+        "keybindings": [
+            {
+                "command": "vue-sort.sort",
+                "when": "resourceLangId == vue",
+                "key": "ctrl+shift+alt+l",
+                "mac": "cmd+shift+alt+l"
+            }
+        ]
+    },
+    "activationEvents": [
+        "onLanguage:vue"
+    ],
+    "devDependencies": {
         "@types/glob": "^7.1.3",
         "@types/mocha": "^8.0.4",
         "@types/node": "^12.11.7",
+        "@types/vscode": "^1.55.0",
         "eslint": "^7.19.0",
         "glob": "^7.1.6",
         "mocha": "^8.2.1",
         "typescript": "^4.1.3",
         "vscode-test": "^1.5.0"
+    },
+    "engines": {
+        "vscode": "^1.55.0"
     }
-
 }
