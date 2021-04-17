@@ -27,7 +27,7 @@
         "menus": {
             "editor/context": [
                 {
-                    "when": "resourceLangId == vue",
+                    "when": "resourceLangId == javascript || resourceLangId == vue",
                     "command": "vue-sort.sort",
                     "group": "1_modification"
                 }
@@ -36,13 +36,14 @@
         "keybindings": [
             {
                 "command": "vue-sort.sort",
-                "when": "resourceLangId == vue",
+                "when": "resourceLangId == javascript || resourceLangId == vue",
                 "key": "ctrl+shift+alt+l",
                 "mac": "cmd+shift+alt+l"
             }
         ]
     },
     "activationEvents": [
+        "onLanguage:javascript",
         "onLanguage:vue"
     ],
     "devDependencies": {

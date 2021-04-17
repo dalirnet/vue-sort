@@ -13,17 +13,24 @@ const scriptBlock = () => {
     }
     for (pointer.position; pointer.position < document.lineCount; pointer.position++) {
         let { text, lineNumber } = document.lineAt(pointer.position)
-        if (pointer.script && text.match(/<\/script.*>/i)) {
-            pointer.script = false
+
+        if (document.languageId == 'vue') {
+            if (pointer.script && text.match(/<\/script.*>/i)) {
+                pointer.script = false
+            }
         }
-        if (pointer.script && text.trim()) {
+
+        if ((document.languageId == 'javascript' || pointer.script) && text.trim()) {
             if (text.match(/export default/i)) {
                 pointer.module = true
             }
             scope[pointer.module ? 'module' : 'import'].push({ text, lineNumber })
         }
-        if (!pointer.script && text.match(/<script.*>/i)) {
-            pointer.script = true
+
+        if (document.languageId == 'vue') {
+            if (!pointer.script && text.match(/<script.*>/i)) {
+                pointer.script = true
+            }
         }
     }
 
