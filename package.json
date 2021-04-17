@@ -3,6 +3,7 @@
     "displayName": "Vue sort",
     "version": "0.0.1",
     "description": "Sort vue component",
+    "publisher": "dalirnet",
     "categories": [
         "Formatters",
         "Other"
