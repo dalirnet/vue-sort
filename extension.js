@@ -87,30 +87,82 @@ const sortImport = (lines) => {
     })
 }
 
-const chunk = () => {
-    const order = {
-        el: [],
-        name: [],
-        components: [],
-        filters: [],
-        mixins: [],
-        layout: [],
-        props: [],
-        data: [],
-        fetch: [],
-        head: [],
-        computed: [],
-        watch: [],
-        beforeCreate: [],
-        created: [],
-        beforeMount: [],
-        mounted: [],
-        beforeDestroy: [],
-        methods: [],
-        fetchOnServer: [],
+const sortModule = (lines) => {
+    const range = {
+        startLine: -1,
+        startCharacter: 0,
+        endLine: -1,
+        endCharacter: 0,
     }
+    const scopes = [
+        'el',
+        'name',
+        'components',
+        'filters',
+        'mixins',
+        'layout',
+        'props',
+        'data',
+        'fetch',
+        'head',
+        'computed',
+        'watch',
+        'beforeCreate',
+        'created',
+        'beforeMount',
+        'mounted',
+        'beforeDestroy',
+        'methods',
+        'fetchOnServer',
+    ]
 
-    return {}
+    const chunk = lines.reduce(
+        (out, { text, lineNumber }, index) => {
+            if (index > 0 && index < lines.length - 1) {
+                if (index === 1) {
+                    range.startLine = lineNumber
+                    out.space = text.match(/^(\s+|)/)[0].length
+                }
+                if (range.endLine < lineNumber) {
+                    range.endLine = lineNumber
+                    range.endCharacter = text.length
+                }
+                let match = text.match(new RegExp('^(\\s{' + out.space + '})(\\w+)((\\s+|)(:|\\())'))
+                if (match) {
+                    out.scope = match[2]
+                }
+                if (out.scope) {
+                    if (!out.keep.hasOwnProperty(out.scope)) {
+                        out.keep[out.scope] = []
+                    }
+
+                    out.keep[out.scope].push(text)
+                }
+            }
+
+            return out
+        },
+        {
+            space: 0,
+            scope: null,
+            keep: {},
+        }
+    ).keep
+
+    return vscode.window.activeTextEditor.edit((builder) => {
+        builder.replace(
+            new vscode.Range(range.startLine, range.startCharacter, range.endLine, range.endCharacter),
+            scopes
+                .reduce((out, scope) => {
+                    if (chunk.hasOwnProperty(scope)) {
+                        out.push(...chunk[scope])
+                    }
+
+                    return out
+                }, [])
+                .join('\n')
+        )
+    })
 }
 
 const sort = () => {
@@ -120,10 +172,16 @@ const sort = () => {
             return Promise.resolve(scriptBlock())
         })
         .then((script) => {
-            return Promise.allSettled([script.import.length ? sortImport(script.import) : Promise.resolve()])
+            return Promise.allSettled([
+                // import
+                // script.import.length ? sortImport(script.import) : Promise.resolve(),
+                // module
+                script.module.length ? sortModule(script.module) : Promise.resolve(),
+            ])
         })
         .then(() => {
-            return vscode.commands.executeCommand('editor.action.formatDocument')
+            return Promise.resolve()
+            // return vscode.commands.executeCommand('editor.action.formatDocument')
         })
         .then(() => {
             console.log('order')
