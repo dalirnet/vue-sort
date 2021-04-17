@@ -2,7 +2,13 @@
 
 Sort vue component
 
-### sort import
+## Shortcut keys
+
+-   linux `ctrl+shift+alt+l`
+-   windows `ctrl+shift+alt+l`
+-   mac `cmd+shift+alt+l`
+
+#### Sort import
 
 -   global
 -   share **(import with `@`)**
@@ -14,7 +20,7 @@ Sort vue component
     -   mixin
     -   component
 
-### sort module
+#### Sort module
 
 -   el
 -   name
