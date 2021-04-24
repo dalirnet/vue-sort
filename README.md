@@ -30,8 +30,12 @@ Sort vue component
 -   mixins
     -   alphabet
 -   layout
+-   middleware
+-   validate
+-   model
 -   props
 -   data
+-   setup
 -   fetch
 -   head
 -   computed
