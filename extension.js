@@ -20,7 +20,7 @@ const scriptBlock = () => {
             }
         }
 
-        if ((document.languageId == 'javascript' || pointer.script) && text.trim()) {
+        if (document.languageId == 'javascript' || pointer.script) {
             if (text.match(/export default/i)) {
                 pointer.module = true
             }
@@ -46,13 +46,6 @@ const sortImport = (lines) => {
     }
     const chunk = lines.reduce(
         (out, { text, lineNumber }) => {
-            let type = text.match(/@/) ? 'share' : text.match(/~/) ? 'local' : 'global'
-            if (type === 'global') {
-                out.global.push(text)
-            } else {
-                let scope = text.match(/\/component/) ? 'component' : text.match(/\/mixin/) ? 'mixin' : 'lib'
-                out[type][scope].push(text)
-            }
             if (range.startLine === -1) {
                 range.startLine = lineNumber
             }
@@ -61,10 +54,22 @@ const sortImport = (lines) => {
                 range.endCharacter = text.length
             }
 
+            if (text.match(/^import/)) {
+                let type = text.match(/@/) ? 'share' : text.match(/~/) ? 'local' : 'global'
+                let scope = text.match(/(com|component)/i) ? 'component' : text.match(/mixin/i) ? 'mixin' : 'lib'
+                out[type][scope].push(text)
+            } else {
+                out.other.push(text)
+            }
+
             return out
         },
         {
-            global: [],
+            global: {
+                lib: [],
+                mixin: [],
+                component: [],
+            },
             share: {
                 lib: [],
                 mixin: [],
@@ -75,6 +80,7 @@ const sortImport = (lines) => {
                 mixin: [],
                 component: [],
             },
+            other: [],
         }
     )
 
@@ -82,13 +88,16 @@ const sortImport = (lines) => {
         builder.replace(
             new vscode.Range(range.startLine, range.startCharacter, range.endLine, range.endCharacter),
             [
-                ...chunk.global.sort(),
+                ...chunk.global.lib.sort(),
+                ...chunk.global.mixin.sort(),
+                ...chunk.global.component.sort(),
                 ...chunk.share.lib.sort(),
                 ...chunk.share.mixin.sort(),
                 ...chunk.share.component.sort(),
                 ...chunk.local.lib.sort(),
                 ...chunk.local.mixin.sort(),
                 ...chunk.local.component.sort(),
+                ...chunk.other,
             ].join('\n')
         )
     })
@@ -143,6 +152,9 @@ const sortModule = (lines) => {
                     out.scope = match[2]
                 }
                 if (out.scope) {
+                    if (scopes.indexOf(out.scope) === -1) {
+                        scopes.push(out.scope)
+                    }
                     if (!out.keep.hasOwnProperty(out.scope)) {
                         out.keep[out.scope] = []
                     }

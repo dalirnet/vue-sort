@@ -1,7 +1,7 @@
 {
     "name": "vue-sort",
     "displayName": "Vue sort",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "Sort vue component",
     "icon": "icon.png",
     "publisher": "dalirnet",
