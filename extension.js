@@ -121,9 +121,9 @@ const sortModule = (lines) => {
         'validate',
         'model',
         'props',
+        'fetch',
         'data',
         'setup',
-        'fetch',
         'head',
         'computed',
         'watch',
@@ -147,9 +147,9 @@ const sortModule = (lines) => {
                     range.endLine = lineNumber
                     range.endCharacter = text.length
                 }
-                let match = text.match(new RegExp('^(\\s{' + out.space + '})(\\w+)((\\s+|)(:|\\())'))
+                let match = text.match(new RegExp('^(\\s{' + out.space + '})(async\\s+|)(\\w+)((\\s+|)(:|\\())'))
                 if (match) {
-                    out.scope = match[2]
+                    out.scope = match[3]
                 }
                 if (out.scope) {
                     if (scopes.indexOf(out.scope) === -1) {
